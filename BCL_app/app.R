@@ -25,6 +25,7 @@ ui <- fluidPage(
                    choices = c("BEER", "REFRESHMENT", "SPIRITS", "WINE"),
                    selected = "WINE"),
       uiOutput("countryOutput"),
+      uiOutput("subtypeOutput"), #added to create a subtype dropdown widget
       img(src = "beer.png", height = 150, width = 150) #added beer image
     ),
     mainPanel(
@@ -38,9 +39,24 @@ ui <- fluidPage(
 server <- function(input, output) {
   output$countryOutput <- renderUI({
     selectInput("countryInput", "Country",
-                sort(unique(bcl$Country)),
-                selected = "CANADA")
+                c("ALL", sort(unique(bcl$Country))), # change code to add an ALL column
+                selected = "ALL")                    # change ALL to default
   })
+
+# Render subtype dropdown based on selected type
+  output$subtypeOutput <- renderUI({
+    if (is.null(input$typeInput)) {
+      return(NULL)
+    }
+
+# Get subtypes from the bcl table and define "ALL" for widget option
+    subtypes_for_type <- c("ALL", unique(bcl$Subtype[bcl$Type == input$typeInput]))
+
+    selectInput("subtypeInput", "Subtype",
+                choices = subtypes_for_type,
+                selected = "ALL")                   #select ALL to default
+  })
+
 
   filtered <- reactive({
     if (is.null(input$countryInput)) {
@@ -51,7 +67,9 @@ server <- function(input, output) {
       filter(Price >= input$priceInput[1],
              Price <= input$priceInput[2],
              Type == input$typeInput,
-             Country == input$countryInput
+             # Change countryInput and subtypeInput to reflect "ALL"
+             (input$countryInput == "ALL" | Country == input$countryInput),
+             (input$subtypeInput == "ALL" | Subtype == input$subtypeInput)
       )
   })
 
