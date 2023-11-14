@@ -20,13 +20,13 @@ ui <- fluidPage(
   titlePanel("BC Liquor Store prices"),
   sidebarLayout(
     sidebarPanel(
-      sliderInput("priceInput", "Price", 0, 100, c(25, 40), pre = "$"),
+      sliderInput("priceInput", "Price", 0, 100, c(0, 100), pre = "$"),
       radioButtons("typeInput", "Product type",
                    choices = c("BEER", "REFRESHMENT", "SPIRITS", "WINE"),
                    selected = "WINE"),
       uiOutput("countryOutput"),
       uiOutput("subtypeOutput"), #added to create a subtype dropdown widget
-      img(src = "beer.png", height = 150, width = 150) #added beer image
+      img(src = "beer.png", height = 200, width = 200, align = "center") #added beer image
     ),
     mainPanel(
       plotOutput("coolplot"),
@@ -78,7 +78,7 @@ server <- function(input, output) {
       return()
     }
     ggplot(filtered(), aes(Alcohol_Content)) +
-      geom_histogram()
+      geom_histogram(fill = "#FFCC00", color = "grey")
   })
 
   output$results <- renderTable({
