@@ -25,8 +25,9 @@ ui <- fluidPage(
                    choices = c("BEER", "REFRESHMENT", "SPIRITS", "WINE"),
                    selected = "WINE"),
       uiOutput("countryOutput"),
-      uiOutput("subtypeOutput"), #added to create a subtype dropdown widget
-      img(src = "beer.png", height = 200, width = 200, align = "center") #added beer image
+      uiOutput("subtypeOutput"),                     #added to create a subtype dropdown widget
+      img(src = "beer.png", height = 200,
+          width = 200, align = "center")             #added beer image
     ),
     mainPanel(
       plotOutput("coolplot"),
@@ -43,11 +44,13 @@ server <- function(input, output) {
                 selected = "ALL")                    # change ALL to default
   })
 
+
 # Render subtype dropdown based on selected type
   output$subtypeOutput <- renderUI({
     if (is.null(input$typeInput)) {
       return(NULL)
     }
+
 
 # Get subtypes from the bcl table and define "ALL" for widget option
     subtypes_for_type <- c("ALL", unique(bcl$Subtype[bcl$Type == input$typeInput]))
@@ -67,7 +70,7 @@ server <- function(input, output) {
       filter(Price >= input$priceInput[1],
              Price <= input$priceInput[2],
              Type == input$typeInput,
-             # Change countryInput and subtypeInput to reflect "ALL"
+                                                    # Change countryInput and subtypeInput to reflect "ALL"
              (input$countryInput == "ALL" | Country == input$countryInput),
              (input$subtypeInput == "ALL" | Subtype == input$subtypeInput)
       )
@@ -81,9 +84,11 @@ server <- function(input, output) {
       geom_histogram(fill = "#FFCC00", color = "grey")
   })
 
+
   output$results <- renderTable({
     filtered()
   })
 }
+
 
 shinyApp(ui = ui, server = server)
