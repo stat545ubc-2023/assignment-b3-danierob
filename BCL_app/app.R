@@ -41,6 +41,7 @@ ui <- fluidPage(
 )
 
 server <- function(input, output) {                  #server is responsible for listening to changes to the inputs and creating outputs to show in the app
+#dynamically generate country dropdown
   output$countryOutput <- renderUI({                 #save object to "output" build object with "render"
     selectInput("countryInput", "Country",           #access "input" values
                 c("ALL", sort(unique(bcl$Country))), #!change code to add an ALL column
@@ -79,6 +80,7 @@ server <- function(input, output) {                  #server is responsible for 
       )
   })
 
+  #generate histogram based on filtered data
   output$coolplot <- renderPlot({
     if (is.null(filtered())) {
       return()
@@ -94,5 +96,5 @@ server <- function(input, output) {                  #server is responsible for 
   })
 }
 
-
+#create, run, and launch shiny app
 shinyApp(ui = ui, server = server)
